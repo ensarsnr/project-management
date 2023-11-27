@@ -1,23 +1,17 @@
 const express = require("express");
 const cors = require("cors");
-const mongoose = require("mongoose");
+const connectDB = require("./db");
+const authRoutes = require("./routes/userAuth");
 
 const app = express();
 const port = process.env.PORT || 3001;
 
+connectDB();
+
 app.use(cors());
 app.use(express.json());
 
-mongoose
-  .connect("mongodb://localhost:27017/project-management", {
-    useNewUrlParser: true,
-  })
-  .then(() => {
-    console.log("Successfully connected to MongoDB");
-  })
-  .catch((error) => {
-    console.log("MongoDB connection error: ", error);
-  });
+app.use("/auth", authRoutes);
 
 app.listen(port, () => {
   console.log(`Connected server ${port}`);
