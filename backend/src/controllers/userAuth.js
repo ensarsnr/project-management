@@ -6,10 +6,10 @@ const User = require("../models/user");
 
 // Yeni bir kullanıcı kaydet
 const register = async (req, res) => {
-  const { name, surname, username, password } = req.body;
+  const { username, password } = req.body;
 
   try {
-    const user = new User({ name, surname, username, password });
+    const user = new User({ username, password });
     await user.save();
     res.json({ message: "Registration successful" });
   } catch (error) {
@@ -28,8 +28,8 @@ const login = async (req, res) => {
       return res.status(400).json({ message: "User not found" });
     }
     // comparePassword giriş yapmaya çalışan kullanıcının şifresini db de karşılaştırıyor.
-    const password = await User.comparePassword({ password });
-    if (!password) {
+    const userPassword = await User.comparePassword({ password });
+    if (!userPassword) {
       return res.status(401).json({ message: "Incorrect password" });
     }
   } catch (error) {
