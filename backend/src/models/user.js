@@ -2,14 +2,6 @@ const mongoose = require("mongoose");
 const Project = require("./project");
 
 const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  surname: {
-    type: String,
-    required: true,
-  },
   username: {
     type: String,
     required: true,
