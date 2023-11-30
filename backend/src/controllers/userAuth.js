@@ -1,39 +1,57 @@
-// const jwt = require('jsonwebtoken');
-// const bcrypt = require('bcrypt');
-// güvenlik için önemli!
-
 const User = require("../models/user");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
-// Yeni bir kullanıcı kaydet
 const register = async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const user = new User({ username, password });
+    // Şifre hashleme
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Yeni kullanıcı oluştur
+    const user = new User({
+      username,
+      password: hashedPassword,
+    });
+
+    // Kullanıcıyı kaydet
     await user.save();
+
     res.json({ message: "Registration successful" });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-// Mevcut bir kullanıcı ile giriş yapın
 const login = async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Mevcut kullanıcıyı bulmak için kullanılıyor
+    // Kullanıcıyı bul
     const user = await User.findOne({ username });
+
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
-    // comparePassword giriş yapmaya çalışan kullanıcının şifresini db de karşılaştırıyor.
-    const userPassword = await User.comparePassword({ password });
-    if (!userPassword) {
-      return res.status(401).json({ message: "Incorrect password" });
+
+    // Şifre kontrolü
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (passwordMatch) {
+      // JWT oluştur
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+
+      res.json({ token, message: "Login successful" });
+    } else {
+      res.status(400).json({ error: "Password doesn't match" });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
