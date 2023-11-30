@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const Project = require("./project");
+const Schema = mongoose.Schema;
 
-const UserSchema = new mongoose.Schema({
+const userSchema = new Schema({
   username: {
     type: String,
     required: true,
@@ -11,12 +11,18 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  role: {
-    type: String,
-    enum: ["user", "admin"],
-    default: "user",
-  },
-  projects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
+  projects: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Project",
+    },
+  ],
 });
 
-module.exports = mongoose.model("User", UserSchema);
+userSchema.methods.addProject = function (projectId) {
+  this.projects.push(projectId);
+};
+
+const User = mongoose.model("User", userSchema);
+
+module.exports = User;
