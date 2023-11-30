@@ -15,10 +15,13 @@ const register = async (req, res) => {
       password: hashedPassword,
     });
 
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
     // Kullanıcıyı kaydet
     await user.save();
 
-    res.json({ message: "Registration successful" });
+    res.json({ token, message: "Registration successful" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
