@@ -24,6 +24,8 @@ const createProject = async (req, res) => {
 
     // Kullanıcının projelerini güncelle
     const user = await User.findById(createdByUserId);
+
+    // addProject user model sayfasında ki fonskiyondan geliyor.
     user.addProject(project._id);
     await user.save();
 
@@ -33,4 +35,35 @@ const createProject = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-module.exports = { createProject };
+
+// Projeye adam ekleme
+const addUser = async (req, res) => {
+  const { username, projectId } = req.body;
+
+  try {
+    // Projeyi db'de bulma
+    const project = await Project.findById(projectId);
+
+    // Proje yoksa burası döndürülüyor
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    // Kullanıcıyı db'de bulma
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Projeye kullanıcıyı ekle
+    project.users.push(user._id);
+    await project.save();
+
+    res.json({ message: `Added ${username} to the project` });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = { createProject, addUser };
