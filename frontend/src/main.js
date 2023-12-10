@@ -2,8 +2,8 @@ import "./style.css";
 import { createApp } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 import App from "./App.vue";
-import Login from "./pages/Login.vue";
-import Register from "./pages/Register.vue";
+import Login from "./pages/auth/Login.vue";
+import Register from "./pages/auth/Register.vue";
 
 const routes = [
   { path: "/", component: Login },
