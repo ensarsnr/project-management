@@ -1,23 +1,6 @@
 <template>
     <div>
-        <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-            <div class="px-3 py-3 lg:px-5 lg:pl-3">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center justify-start">
-                        <h1 class="text-white text-2xl">Project Management</h1>
-                    </div>
-                    <div class="">
-                        <ul class="flex justify-between">
-                            <li>
-                                <button
-                                    class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
-                                    Sign Out</button>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </nav>
+        <Navbar />
 
 
         <button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar"
@@ -36,18 +19,21 @@
             class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
             aria-label="Sidebar">
             <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-                <ul class="space-y-2 font-medium">
-
+                <ul class="mt-20 space-y-2 font-medium">
+                    <li class="text-white text-center">
+                        <button class="bg-green-600 py-2 px-4 rounded-lg w-3/4 text-sm font-bold hover:bg-green-700">Created
+                            Project</button>
+                    </li>
                 </ul>
             </div>
         </aside>
-
-
     </div>
 </template>
 
   
 <script>
+import Navbar from '../components/Navbar.vue';
+
 export default {
     methods: {
         toggleSidebar() {
@@ -55,22 +41,19 @@ export default {
             const isOpen = sidebar.getAttribute("data-drawer-open") === "true";
             sidebar.setAttribute("data-drawer-open", String(!isOpen));
         },
-        signOut() {
-            // Implement sign-out logic here
-        },
     },
     beforeRouteEnter(to, from, next) {
-        // Check if the user token exists in local storage
         const userToken = localStorage.getItem("userToken");
-
-        // If the token does not exist, redirect to the register page
+        // LocalStorage'e kaydedilen token'ı kontrol ediyor. Token değeri boşsa register sayfasına yönlendiriyor.
         if (!userToken) {
             next("/register");
-        } else {
-            // Continue with the navigation
+        }
+        else {
+            // Eğer token değeri doluysa bu sayfada devam etmesini söylüyoruz.
             next();
         }
     },
+    components: { Navbar }
 };
 </script>
   
