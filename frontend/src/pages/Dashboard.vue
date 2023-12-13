@@ -21,17 +21,20 @@
             <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
                 <ul class="mt-20 space-y-2 font-medium">
                     <li class="text-white text-center">
-                        <button class="bg-green-600 py-2 px-4 rounded-lg w-3/4 text-sm font-bold hover:bg-green-700">Created
+                        <button @click="openModal"
+                            class="bg-green-600 py-2 px-4 rounded-lg w-3/4 text-sm font-bold hover:bg-green-700">Created
                             Project</button>
                     </li>
                 </ul>
             </div>
         </aside>
     </div>
+    <Modal />
 </template>
 
   
 <script>
+import Modal from '../components/Modal.vue';
 import Navbar from '../components/Navbar.vue';
 
 export default {
@@ -40,6 +43,12 @@ export default {
             const sidebar = document.getElementById("default-sidebar");
             const isOpen = sidebar.getAttribute("data-drawer-open") === "true";
             sidebar.setAttribute("data-drawer-open", String(!isOpen));
+        },
+        openModal() {
+            const modal = document.getElementById("authentication-modal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex")
+            document.body.classList.add("overflow-hidden");
         },
     },
     beforeRouteEnter(to, from, next) {
@@ -53,7 +62,7 @@ export default {
             next();
         }
     },
-    components: { Navbar }
+    components: { Navbar, Modal }
 };
 </script>
   
