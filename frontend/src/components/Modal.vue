@@ -55,6 +55,7 @@ import services from '../services';
 
 export default {
 
+
     data() {
         return {
             projectName: "",
@@ -76,7 +77,6 @@ export default {
             this.desc = e.target.value;
         },
         submitProject(e) {
-            e.preventDefault();
             console.log(this.projectName, localStorage.getItem("userToken"))
             this.createProject();
             this.closeModal()
