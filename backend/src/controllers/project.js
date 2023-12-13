@@ -3,7 +3,7 @@ const Project = require("../models/project");
 const User = require("../models/user");
 
 const createProject = async (req, res) => {
-  const { name } = req.body;
+  const { name, desc } = req.body;
 
   try {
     // Projeyi oluşturan kullanıcının id bilgisini al
@@ -15,7 +15,8 @@ const createProject = async (req, res) => {
 
     // Yeni bir proje oluştur
     const project = new Project({
-      name,
+      name: name,
+      desc: desc,
       admin: createdByUserId,
     });
 
