@@ -28,7 +28,40 @@
                 </ul>
             </div>
         </aside>
-    </div>
+        <div class="pt-10 sm:pt-20 sm:pl-80 w-full sm:w-11/12">
+            <!-- Card 1 -->
+            <a v-for="project in projects" :key="project._id"
+                class="mb-4 rounded-sm w-2/2 grid grid-cols-12 bg-white shadow p-3 items-center hover:shadow-lg transition delay-150 duration-300 ease-in-out hover:scale-105 transform"
+                href="#">
+
+                <!-- Icon -->
+                <div class="col-span-12 md:col-span-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                        stroke="#2563eb">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+                    </svg>
+                </div>
+
+                <!-- Title -->
+                <div class="col-span-10 xl:-ml-5">
+                    <p class="text-blue-600 font-semibold"> {{ project.name }}</p>
+                </div>
+
+                <div class="col-span-1">
+                    <button class=" w-full   rounded-lg py-2 bg-red-500 text-white font-bold hover:bg-red-600">X</button>
+                </div>
+
+                <!-- Description -->
+                <div class="md:col-start-2 col-span-11 xl:-ml-5">
+                    <p class="text-sm text-gray-800 font-light"> {{ project.desc }} </p>
+                </div>
+
+
+            </a>
+
+        </div>
+    </div>c
     <Modal />
 </template>
 
@@ -36,8 +69,19 @@
 <script>
 import Modal from '../components/Modal.vue';
 import Navbar from '../components/Navbar.vue';
+import services from '../services';
 
 export default {
+
+    data() {
+        return {
+            projects: [],
+        }
+    },
+    mounted() {
+        this.getProjects();
+    },
+
     methods: {
         toggleSidebar() {
             const sidebar = document.getElementById("default-sidebar");
@@ -50,7 +94,17 @@ export default {
             modal.classList.add("flex")
             document.body.classList.add("overflow-hidden");
         },
+        async getProjects() {
+            try {
+                const response = await services.getProjects();
+                this.projects = response.data.projects;
+                console.log(response.data.projects);
+            } catch (error) {
+                console.log("Fetch error: ", error);
+            }
+        }
     },
+
     beforeRouteEnter(to, from, next) {
         const userToken = localStorage.getItem("userToken");
         // LocalStorage'e kaydedilen token'ı kontrol ediyor. Token değeri boşsa register sayfasına yönlendiriyor.
@@ -58,11 +112,20 @@ export default {
             next("/register");
         }
         else {
+
             // Eğer token değeri doluysa bu sayfada devam etmesini söylüyoruz.
             next();
         }
+
     },
     components: { Navbar, Modal }
 };
 </script>
   
+
+
+<style>
+body {
+    background-color: rgb(61, 58, 58);
+}
+</style>
