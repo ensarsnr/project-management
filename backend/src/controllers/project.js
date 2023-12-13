@@ -66,4 +66,31 @@ const addUser = async (req, res) => {
   }
 };
 
-module.exports = { createProject, addUser };
+// Projeleri çekme
+const getProjects = async (req, res) => {
+  try {
+    // Kullanıcının idsini alıyoruz
+
+    const userId = req.user ? req.user.userId : null;
+
+    if (!userId) {
+      return res.status(401).json({ error: "User not authenticated" });
+    }
+
+    // Kullanıcının projelerini bulmaya yarıyor
+    const user = await User.findById(userId).populate("projects");
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Kullanıcının projelerini döndürür
+    const projects = user.projects;
+    res.json({ projects });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = { createProject, addUser, getProjects };
