@@ -94,4 +94,43 @@ const getProjects = async (req, res) => {
   }
 };
 
-module.exports = { createProject, addUser, getProjects };
+// Projeyi kaldırma işlemi
+const deletedProject = async (req, res) => {
+  const { projectId } = req.body;
+
+  try {
+    const userId = req.user ? req.user.userId : null;
+
+    if (!userId) {
+      return res.status(401).json({ error: "User not authenticated" });
+    }
+
+    const user = await User.findById(userId);
+
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    // Projeyi silen projenin admini mi diye kontrol ediliyor.
+    if (project.admin.toString() !== userId) {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized: You are not the admin of this project" });
+    }
+
+    // Projeyi silmek için deleteOne fonksiyonu kullanıldı. Proje seçimi id göre belirleniyor.
+    await Project.deleteOne({ _id: projectId });
+
+    // Değişiklikler kaydedildi
+    await user.save();
+
+    res.json({ message: `Deleted project with ID ${projectId}` });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = { createProject, addUser, getProjects, deletedProject };
