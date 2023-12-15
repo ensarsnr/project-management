@@ -57,7 +57,11 @@ const addUser = async (req, res) => {
     }
 
     // Projeye kullanıcıyı ekle
+    user.projects.push(projectId);
     project.users.push(user._id);
+
+    // Save the changes to both user and project
+    await user.save();
     await project.save();
 
     res.json({ message: `Added ${username} to the project` });
@@ -71,23 +75,29 @@ const addUser = async (req, res) => {
 const getProjects = async (req, res) => {
   try {
     // Kullanıcının idsini alıyoruz
-
     const userId = req.user ? req.user.userId : null;
 
     if (!userId) {
       return res.status(401).json({ error: "User not authenticated" });
     }
 
-    // Kullanıcının projelerini bulmaya yarıyor
+    // Kullanıcının projelerini ve kullanıcı adını döndürür
     const user = await User.findById(userId).populate("projects");
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Kullanıcının projelerini döndürür
+    // Kullanıcının projelerini al
     const projects = user.projects;
-    res.json({ projects });
+
+    // Kullanıcının projelerinin adminlerinin username'lerini al
+    const projectsWithAdminUsername = await Project.populate(projects, {
+      path: "admin",
+      select: "username",
+    });
+
+    res.json({ projects: projectsWithAdminUsername });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
